@@ -31,9 +31,12 @@ module.exports = {
           });
   
           const newUser = new User({
+            firstname: req.body.firstname,
+            surname: req.body.surname,
             username: req.body.username,
             email: req.body.email,
             password: req.body.password,
+            password2: req.body.password2,
             avatar,
           });
   

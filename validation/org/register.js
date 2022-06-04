@@ -6,7 +6,7 @@ module.exports = function validateRegisterInput(data) {
 
   data.orgname = isEmpty(data.orgname) ? '' : data.orgname;
   data.email = isEmpty(data.email) ? '' : data.email;
-  data.location = isEmpty(data.location) ? '' : data.location;
+  data.address = isEmpty(data.address) ? '' : data.address;
   data.password = isEmpty(data.password) ? '' : data.password;
   data.password2 = isEmpty(data.password2) ? '' : data.password2;
 
@@ -28,13 +28,13 @@ module.exports = function validateRegisterInput(data) {
     errors.email = 'Email is invalid';
   }
 
-  // Location validation
-  if(!Validator.isLength(data.location, { min: 2, max: 50 })) {
-    errors.location = 'Location must be between 2 and 50 characters';
+  // address validation
+  if(!Validator.isLength(data.address, { min: 2, max: 50 })) {
+    errors.address = 'address must be between 2 and 50 characters';
   }
 
-  if(Validator.isEmpty(data.location)) {
-    errors.location = 'Location field is required';
+  if(Validator.isEmpty(data.address)) {
+    errors.address = 'address field is required';
   }
 
   // Password validation

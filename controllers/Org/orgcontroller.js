@@ -26,8 +26,9 @@ module.exports = {
           const newOrg = new Org({
             orgname: req.body.orgname,
             email: req.body.email,
-            location: req.body.location,
-            password: req.body.password
+            address: req.body.address,
+            password: req.body.password,
+            password2: req.body.password2
           });
   
           bcrypt.genSalt(10, (err, salt) => {

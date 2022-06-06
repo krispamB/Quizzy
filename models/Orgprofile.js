@@ -1,34 +1,35 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-// Create Schema
-const UserSchema = new Schema({
-  firstname: {
+// Create new Schema
+const OrgprofileSchema = new Schema({
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: "orgs",
+  },
+  handle: {
+    type: String,
+    required: true
+  },
+  website: {
     type: String,
     required: true,
   },
-  surname: {
+  country: {
     type: String,
     required: true,
   },
-  username: {
+  city: {
     type: String,
     required: true,
   },
-  email: {
+  zipcode: {
+    type: String,
+    required: false,
+  },
+  address: {
     type: String,
     required: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  password2: {
-    type: String,
-    required: true,
-  },
-  avatar: {
-    type: String,
   },
   date: {
     type: Date,
@@ -36,4 +37,4 @@ const UserSchema = new Schema({
   },
 });
 
-module.exports = User = mongoose.model("users", UserSchema);
+module.exports = orgProfile = mongoose.model("OrgProfile", OrgprofileSchema);

@@ -1,23 +1,41 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { profileCurrent, profile  } = require('../../controllers/user/profilecontroller');
 const { auth } = require('../../controllers/authcontroller');
 
+// Org controller
+const { getCurrentOrg, editOrgProgile  } = require('../../controllers/Org/orgprofile');
+// User conrtoller
+const { profileCurrent, profile  } = require('../../controllers/user/profilecontroller');
 
-// @route   GET api/profile/test
-// @desc    Test profile route
-// @access  Public
-router.get('/test', (req, res) => res.json({msg: "Profile Works"}));
+
+//                            Org Routes 
 
 // @route   GET api/profile
-// @desc    Get current users profile
+// @desc    Get current org profile
 // @access  Private
-router.get('/', auth, profileCurrent);
+router.get('/org', auth, getCurrentOrg);
 
 // @route   post api/profile
 // @desc    create or edit user profile
 // @access  Private
-router.post('/', auth, profile);
+router.post('/org', auth, editOrgProgile);
+
+//                            Users Routes 
+
+// @route   GET api/profile/test
+// @desc    Test profile route
+// @access  Public
+router.get("/test", (req, res) => res.json({ msg: "Profile Works" }));
+
+// @route   GET api/profile
+// @desc    Get current users profile
+// @access  Private
+router.get('/user', auth, profileCurrent);
+
+// @route   post api/profile
+// @desc    create or edit user profile
+// @access  Private
+router.post('/user', auth, profile);
 
 
 module.exports = router;

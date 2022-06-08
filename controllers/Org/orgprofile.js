@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const passport = require("passport");
 const validateProfileInput = require("../../validation/org/profile");
+const validateTestersInput = require("../../validation/org/testers");
 
 // Load profile model
 const Profile = require("../../models/Orgprofile");
@@ -46,8 +47,9 @@ module.exports = {
           { user: req.user.id },
           { $set: profileFields },
           { new: true }
-        ).then((profile) => res.json(profile))
-          .catch(err => res.json(err));
+        )
+          .then((profile) => res.json(profile))
+          .catch((err) => res.json(err));
       } else {
         // Create
 
@@ -65,5 +67,54 @@ module.exports = {
         });
       }
     });
+  },
+  getTesters: (req, res) => {
+    const errors = {};
+    Profile.findOne({ user: req.user.id }).then(profile => {
+      if(!profile){
+        errors.noprofile = 'There is no profle for this user';
+        return res.status(404).json(errors)
+      }
+      res.json(profile.testers);
+    })
+    .catch(err => res.json(err));
+  },
+  addTesters: (req, res) => {
+    const { errors, isValid } = validateTestersInput(req.body);
+
+    // Check validation
+    if (!isValid) {
+      // Return any errors with 400 status
+      return res.status(400).json(errors);
+    }
+
+    Profile.findOne({ user: req.user.id }).then((profile) => {
+      const newTesters = {
+        fullName: req.body.fullName,
+        department: req.body.department,
+        email: req.body.email,
+      };
+
+      // Add to testers array
+      profile.testers.unshift(newTesters);
+
+      profile.save().then((profile) => res.json(profile));
+    });
+  },
+  removeTesters: (req, res) => {
+    Profile.findOne({ user: req.user.id })
+      .then((profile) => {
+        // Get remove index
+        const removeIndex = profile.testers
+          .map((item) => item.id)
+          .indexOf(req.params.testers_id);
+
+        // Splice outof array
+        profile.testers.splice(removeIndex, 1);
+
+        // Save
+        profile.save().then((profile) => res.json(profile));
+      })
+      .catch((err) => res.status(400).json(err));
   },
 };

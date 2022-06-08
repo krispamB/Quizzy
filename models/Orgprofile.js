@@ -9,7 +9,7 @@ const OrgprofileSchema = new Schema({
   },
   handle: {
     type: String,
-    required: true
+    required: true,
   },
   website: {
     type: String,
@@ -31,6 +31,22 @@ const OrgprofileSchema = new Schema({
     type: String,
     required: true,
   },
+  testers: [
+    {
+      fullName: {
+        type: String,
+        required: true,
+      },
+      department: {
+        type: String,
+        required: true,
+      },
+      email: {
+        type: String,
+        required: true,
+      }
+    },
+  ],
   date: {
     type: Date,
     default: Date.now,

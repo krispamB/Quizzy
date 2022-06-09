@@ -9,6 +9,9 @@
   },
   "author": "Christopher Pam",
   "license": "MIT",
+  "engines": {
+    "node": "18.1.0"
+  },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.0",

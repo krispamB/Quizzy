@@ -34,6 +34,6 @@ app.use('/api/users', users);
 app.use('/api/profile', profile);
 app.use('/api/complaint', complaint);
 
-const port = 8000; 
+const port = process.env.PORT || 8000;
 
 app.listen(port, () => console.log(`Server running  on port ${port}`));

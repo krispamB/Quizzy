@@ -2,7 +2,11 @@ const express = require("express");
 const Quizes = require("../../models/Quizes");
 const Set = require("../../models/QuestionSet");
 const { auth } = require("../../controllers/authcontroller");
-
+const crypto = require("crypto");
+const {
+  answer,
+  answeredQuizzes,
+} = require("../../controllers/Quiz/answer.controller");
 const router = express.Router();
 
 //@route    GET api/quiz/test
@@ -134,5 +138,28 @@ router.get("/set/:id", async (req, res) => {
     res.status(500).json(error);
   }
 });
+
+/**
+ * @route POST api/quiz/answer
+ * @description Answer Question
+ * @access Private
+ */
+
+router.post("/answer", auth, answer);
+
+/**
+ * @route GET api/quiz/answered-quizzes
+ * @description Get answers
+ * @access Private
+ */
+router.get("/answered-quizzes", auth, answeredQuizzes);
+
+// const options = ["20", "30", "40", "50"];
+
+// const option = {};
+// const letters = ["A", "B", "C", "D", "E", "F", "G"];
+// options.map((x, i) => {
+//   option[letters[i]] = x;
+// });
 
 module.exports = router;

@@ -18,15 +18,9 @@ const QuestionsSchema = new Schema(
       type: [],
       required: true,
     },
-
     answer: {
-      type: Number,
+      type: String,
       required: true,
-    },
-
-    isCorrectAnswer: {
-      type: Boolean,
-      default: false,
     },
   },
   {

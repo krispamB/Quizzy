@@ -3,9 +3,10 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 
-const users = require('./routes/api/users')
-const profile = require('./routes/api/profile')
-const complaint = require('./routes/api/complaint')
+const users = require('./routes/api/users');
+const profile = require('./routes/api/profile');
+const complaint = require('./routes/api/complaint');
+const quizRouter = require('./routes/api/quiz');
 
 const app = express();
 
@@ -33,6 +34,7 @@ require('./config/passport')(passport);
 app.use('/api/users', users);
 app.use('/api/profile', profile);
 app.use('/api/complaint', complaint);
+app.use('/api/quiz', quizRouter);
 
 const port = 8000; 
 

@@ -22,6 +22,10 @@ const QuestionsSchema = new Schema(
       type: String,
       required: true,
     },
+    set_id: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,

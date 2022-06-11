@@ -21,6 +21,10 @@ const AnsweredQuizzes = new Schema(
       type: Boolean,
       default: false,
     },
+    set_id: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );

@@ -14,12 +14,13 @@ module.exports = {
             return;
           }
           const isCorrect = await isCorrectAnswer(x.question_id, x.answer);
-
+          const quiz = await findQuiz(x.question_id);
           const newAnsweredQuiz = new AnsweredQuizesSchema({
             user: user._id,
             question: x.question_id,
             chosenAnswer: x.answer,
             isCorrect,
+            set_id: quiz.set_id,
           });
 
           await newAnsweredQuiz.save();
@@ -53,11 +54,27 @@ module.exports = {
       return res.status(500).json(error);
     }
   },
+
+  answeredQuizzesBySetId: async (req, res) => {
+    const result = await AnsweredQuizesSchema.find({
+      set_id: req.params.set_id,
+    })
+      .populate({
+        path: "question",
+        select: ["-answer"],
+      })
+      .populate({
+        path: "user",
+        select: ["-password"],
+      });
+
+    res.status(200).json({ msg: result });
+  },
 };
 
 const isCorrectAnswer = async (question_id, answer) => {
   try {
-    const question = await Quizes.findById(question_id);
+    const question = await findQuiz(question_id);
 
     if (!question) return false;
 
@@ -78,4 +95,8 @@ const hasBeenAnswered = async (user_id, question_id) => {
   } catch (error) {
     throw error;
   }
+};
+
+const findQuiz = async (question_id) => {
+  return await Quizes.findById(question_id);
 };

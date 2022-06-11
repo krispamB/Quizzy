@@ -6,6 +6,7 @@ const crypto = require("crypto");
 const {
   answer,
   answeredQuizzes,
+  answeredQuizzesBySetId,
 } = require("../../controllers/Quiz/answer.controller");
 const router = express.Router();
 
@@ -26,11 +27,18 @@ router.get("/test", async (req, res) => {
 // @access  Public
 router.post("/:set_id/questions", async (req, res) => {
   try {
-    const { questions } = req.body;
+    let { questions } = req.body;
 
     const set = await Set.findById(req.params.set_id);
 
     if (!set) return res.status(404).json({ msg: "set not found." });
+
+    questions = questions.map((x) => {
+      return {
+        ...x,
+        set_id: req.params.set_id,
+      };
+    });
 
     const saved_questions = await await Quizes.insertMany(questions);
 
@@ -40,6 +48,7 @@ router.post("/:set_id/questions", async (req, res) => {
 
     res.json({ msg: saved_questions });
   } catch (error) {
+    console.log(error);
     res.status(500).json(error);
   }
 });
@@ -61,6 +70,7 @@ router.post("/:set_id/question", async (req, res) => {
       question,
       options: [options],
       answer,
+      set_id: req.params.set_id,
     });
 
     await newQuestion.save();
@@ -153,6 +163,13 @@ router.post("/answer", auth, answer);
  * @access Private
  */
 router.get("/answered-quizzes", auth, answeredQuizzes);
+
+/**
+ * @route GET api/quiz/:set_id/answered-quizzes
+ * @description Get answers
+ * @access Private
+ */
+router.get("/:set_id/answered-quizzes", auth, answeredQuizzesBySetId);
 
 // const options = ["20", "30", "40", "50"];
 

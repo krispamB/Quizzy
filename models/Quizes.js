@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 // const optionSchema = new Schema({
@@ -8,29 +8,32 @@ const Schema = mongoose.Schema;
 //   }
 // });
 
-const QuestionsSchema = new Schema({
+const QuestionsSchema = new Schema(
+  {
     question: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     options: {
       type: [],
-      required: true
+      required: true,
     },
 
     answer: {
       type: Number,
-      required: true
+      required: true,
     },
 
     isCorrectAnswer: {
       type: Boolean,
       default: false,
-    }
-   }, {
-    timestamps: true
-});
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-const Quizes = mongoose.model('quiz', QuestionsSchema);
+const Quizes = mongoose.model("quizzes", QuestionsSchema);
 
 module.exports = Quizes;

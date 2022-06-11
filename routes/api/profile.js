@@ -49,11 +49,7 @@ router.delete("/org/testers/:testers_id", auth, removeTesters);
 // @route   GET api/profile/test
 // @desc    Test profile route
 // @access  Public
-<<<<<<< HEAD
-router.get('/test', (req, res) => res.json({msg: "Profile works"}));
-=======
 router.get("/test", (req, res) => res.json({ msg: "Profile Works" }));
->>>>>>> 768df1439740c9ea02fad20d7dcb513fc35f25ca
 
 // @route   GET api/profile
 // @desc    Get current users profile

@@ -3,6 +3,7 @@ const Quizes = require("../../models/Quizes");
 const Set = require("../../models/QuestionSet");
 const { auth } = require("../../controllers/authcontroller");
 const crypto = require("crypto");
+
 const {
   answer,
   answeredQuizzes,
@@ -22,12 +23,12 @@ router.get("/test", async (req, res) => {
   }
 });
 
-//@route    GET api/quiz/questions
+//@route    POST api/quiz/:set_id/questions
 // @desc    Test questions route
 // @access  Public
 router.post("/:set_id/questions", async (req, res) => {
   try {
-    let { questions } = req.body;
+    let questions = req.body;
 
     const set = await Set.findById(req.params.set_id);
 
@@ -40,7 +41,7 @@ router.post("/:set_id/questions", async (req, res) => {
       };
     });
 
-    const saved_questions = await await Quizes.insertMany(questions);
+    const saved_questions = await Quizes.insertMany(questions);
 
     saved_questions.map((x) => set.questions.push(x._id));
 

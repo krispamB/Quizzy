@@ -84,6 +84,7 @@ module.exports = {
             id: org.id,
             orgname: org.orgname,
             email: org.email,
+            role: "ORG",
           }; // Payload
 
           // Sign token

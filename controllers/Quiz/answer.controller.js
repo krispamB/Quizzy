@@ -17,6 +17,7 @@ module.exports = {
           const quiz = await findQuiz(x.question_id);
           const newAnsweredQuiz = new AnsweredQuizesSchema({
             user: user._id,
+            orgs: x.org_id,
             question: x.question_id,
             chosenAnswer: x.answer,
             isCorrect,
@@ -37,7 +38,7 @@ module.exports = {
   answeredQuizzes: async (req, res) => {
     try {
       const answeredquizzes = await AnsweredQuizesSchema.find({
-        user: req.user._id,
+        // user: req.user._id,
       })
         .populate({
           path: "question",

@@ -80,6 +80,7 @@ module.exports = {
             id: user.id,
             username: user.username,
             avatar: user.avatar,
+            role: "USER",
           }; // Payload
 
           // Sign token

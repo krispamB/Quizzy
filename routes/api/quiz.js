@@ -1,7 +1,7 @@
 const express = require("express");
 const Quizes = require("../../models/Quizes");
 const Set = require("../../models/QuestionSet");
-const { auth } = require("../../controllers/authcontroller");
+const { auth, isOrg } = require("../../controllers/authcontroller");
 const crypto = require("crypto");
 
 const {
@@ -163,7 +163,7 @@ router.post("/answer", auth, answer);
  * @description Get answers
  * @access Private
  */
-router.get("/answered-quizzes", auth, answeredQuizzes);
+router.get("/answered-quizzes", auth, isOrg, answeredQuizzes);
 
 /**
  * @route GET api/quiz/:set_id/answered-quizzes

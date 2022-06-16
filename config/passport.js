@@ -17,15 +17,28 @@ module.exports = (passport) => {
         const user = await User.findById(jwt_payload.id);
 
         // ID not found in User, return execution to next handler
-        if (!user) return done(null, false);
+        if (!user) {
+          return done(null, false);
+        }
 
         // ID found in user, return user
-        if (user) return done(null, user);
-        console.log({ user });
+        if (user) {
+          let authenticatedUser = {
+            ...user._doc,
+            role: jwt_payload.role,
+          };
+          return done(null, authenticatedUser);
+        }
       } else {
         // ID found in Org, return org
-        if (org) return done(null, org);
-        console.log({ org });
+
+        if (org) {
+          let authenticatedUser = {
+            ...org._doc,
+            role: jwt_payload.role,
+          };
+          return done(null, authenticatedUser);
+        }
       }
     })
   );

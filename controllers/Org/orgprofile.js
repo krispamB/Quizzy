@@ -90,17 +90,14 @@ module.exports = {
 
     Profile.findOne({ user: req.user.id }).then((profile) => {
       const newTesters = {
+        fullName: req.body.fullName,
+        department: req.body.department,
         email: req.body.email,
-        firstname: req.body.firstname,
-        surname: req.body.surname,
-        middlename: req.body.middlename,
-        username: req.body.username,
-        department: req.body.department
       };
-
+    
       // Add to testers array
       profile.testers.unshift(newTesters);
-
+    
       profile.save().then((profile) => res.json(profile));
     });
   },

@@ -33,23 +33,7 @@ const OrgprofileSchema = new Schema({
   },
   testers: [
     {
-      email: {
-        type: String,
-        required: true,
-      },
-      firstname: {
-        type: String,
-        required: true,
-      },
-      surname: {
-        type: String,
-        required: true,
-      },
-      middlename: {
-        type: String,
-        required: true,
-      },
-      username: {
+      fullName: {
         type: String,
         required: true,
       },
@@ -57,6 +41,10 @@ const OrgprofileSchema = new Schema({
         type: String,
         required: true,
       },
+      email: {
+        type: String,
+        required: true,
+      }
     },
   ],
   date: {

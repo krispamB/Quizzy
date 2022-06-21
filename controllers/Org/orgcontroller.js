@@ -27,7 +27,7 @@ module.exports = {
           email: req.body.email,
           address: req.body.address,
           password: req.body.password,
-          // password2: req.body.password2,
+          password2: req.body.password2,
         });
         
         // $password = password_hash($PASSWORD_DEFAULT);

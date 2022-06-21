@@ -1,11 +1,11 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 
 // Create new Schema
 const OrgprofileSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
-    ref: "orgs",
+    ref: 'orgs',
   },
   handle: {
     type: String,
@@ -33,7 +33,23 @@ const OrgprofileSchema = new Schema({
   },
   testers: [
     {
-      fullName: {
+      email: {
+        type: String,
+        required: true,
+      },
+      firstname: {
+        type: String,
+        required: true,
+      },
+      surname: {
+        type: String,
+        required: true,
+      },
+      middlename: {
+        type: String,
+        required: true,
+      },
+      username: {
         type: String,
         required: true,
       },
@@ -41,16 +57,12 @@ const OrgprofileSchema = new Schema({
         type: String,
         required: true,
       },
-      email: {
-        type: String,
-        required: true,
-      }
     },
   ],
   date: {
     type: Date,
     default: Date.now,
   },
-});
+})
 
-module.exports = orgProfile = mongoose.model("OrgProfile", OrgprofileSchema);
+module.exports = orgProfile = mongoose.model('OrgProfile', OrgprofileSchema)

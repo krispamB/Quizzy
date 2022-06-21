@@ -1,4 +1,4 @@
-// const bcrypt = require("bcryptjs");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const secret = require("../../config/keys").secretOrKey;
 
@@ -27,32 +27,32 @@ module.exports = {
           email: req.body.email,
           address: req.body.address,
           password: req.body.password,
-          // password2: req.body.password2,
+          password2: req.body.password2,
         });
         
-        $password = password_hash($PASSWORD_DEFAULT);
+        // $password = password_hash($PASSWORD_DEFAULT);
 
-        //generate code
-        $set='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-        $code=substr(str_shuffle($set), 0, 12);
+        // //generate code
+        // $set='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        // $code=substr(str_shuffle($set), 0, 12);
 
-        $password2 = password_hash($PASSWORD_DEFAULT);
+        // $password2 = password_hash($PASSWORD_DEFAULT);
 
-        //generate code
-        $set='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-        $code=substr(str_shuffle($set), 0, 12);
+        // //generate code
+        // $set='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        // $code=substr(str_shuffle($set), 0, 12);
 
 
-        // bcrypt.genSalt(10, (err, salt) => {
-        //   bcrypt.hash(newOrg.password, salt, (err, hash) => {
-        //     if (err) throw err;
-        //     newOrg.password = hash;
-        //     newOrg
-        //       .save()
-        //       .then((user) => res.json(user))
-        //       .catch((err) => console.log(err));
-        //   });
-        // });
+        bcrypt.genSalt(10, (err, salt) => {
+          bcrypt.hash(newOrg.password, salt, (err, hash) => {
+            if (err) throw err;
+            newOrg.password = hash;
+            newOrg
+              .save()
+              .then((user) => res.json(user))
+              .catch((err) => console.log(err));
+          });
+        });
       }
     });
   },

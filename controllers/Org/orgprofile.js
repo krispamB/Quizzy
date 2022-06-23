@@ -100,7 +100,7 @@ module.exports = {
     
       profile.save()
       .then((profile) => res.json(profile))
-      
+      .catch(console.log(error))
     });
   },
   removeTesters: (req, res) => {

@@ -98,7 +98,9 @@ module.exports = {
       // Add to testers array
       profile.testers.unshift(newTesters);
     
-      profile.save().then((profile) => res.json(profile));
+      profile.save()
+      .then((profile) => res.json(profile))
+      
     });
   },
   removeTesters: (req, res) => {

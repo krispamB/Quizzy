@@ -8,6 +8,7 @@ const users = require('./routes/api/users');
 const profile = require('./routes/api/profile');
 const complaint = require('./routes/api/complaint');
 const quizRouter = require('./routes/api/quiz');
+const filter = require('./routes/api/filter');
 
 const app = express();
 app.use(cors({ origin: '*' }));
@@ -37,6 +38,7 @@ app.use('/api/users', users);
 app.use('/api/profile', profile);
 app.use('/api/complaint', complaint);
 app.use('/api/quiz', quizRouter);
+app.use('/api/filter', filter);
 
 const port = process.env.PORT || 5000;
 

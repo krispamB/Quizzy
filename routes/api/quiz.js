@@ -1,6 +1,7 @@
 const express = require("express");
 const Quizes = require("../../models/Quizes");
 const Set = require("../../models/QuestionSet");
+const Testers = require("../../models/Testers")
 const { auth, isOrg } = require("../../controllers/authcontroller");
 const crypto = require("crypto");
 
@@ -171,6 +172,36 @@ router.get("/answered-quizzes", auth, isOrg, answeredQuizzes);
  * @access Private
  */
 router.get("/:set_id/answered-quizzes", auth, answeredQuizzesBySetId);
+
+
+// Org controller
+const {
+  addTesters,
+  removeTesters,
+  getTesters,
+} = require("../../controllers/Org/orgprofile");
+
+//                            Testers Routes
+
+
+router.get('/try', (req, res) => res.json({msg: "testers Works"}));
+
+// @route   GET api/quiz/testers
+// @desc    Get testers from profile array
+// @access  Private
+router.get("/testers", auth, getTesters);
+
+// @route   post api/quiz/testers
+// @desc    Add testers to profile array
+// @access  Private
+router.post("/testers", auth, addTesters);
+
+// @route   DELETE api/quiz/testers/:testers_id
+// @desc    Remove testers from profile array
+// @access  Private
+
+router.delete("/testers/:testers_id", auth, removeTesters);
+
 
 // const options = ["20", "30", "40", "50"];
 

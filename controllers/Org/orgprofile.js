@@ -7,6 +7,8 @@ const validateTestersInput = require("../../validation/org/testers");
 const Profile = require("../../models/Orgprofile");
 // Load Org model
 const Org = require("../../models/Org");
+//Load Testers model
+const Tester = require("../../models/Testers");
 
 module.exports = {
   getCurrentOrg: (req, res) => {
@@ -32,7 +34,7 @@ module.exports = {
 
     // Get fields
     const profileFields = {};
-    profileFields.user = req.user.id;
+    profileFields.user = req.user._id;
     if (req.body.handle) profileFields.handle = req.body.handle;
     if (req.body.website) profileFields.website = req.body.website;
     if (req.body.country) profileFields.country = req.body.country;
@@ -40,11 +42,11 @@ module.exports = {
     if (req.body.zipcode) profileFields.zipcode = req.body.zipcode;
     if (req.body.address) profileFields.address = req.body.address;
 
-    Profile.findOne({ user: req.user.id }).then((profile) => {
+    Profile.findOne({ user: req.user._id }).then((profile) => {
       if (profile) {
         // Update profile
         Profile.findByIdAndUpdate(
-          { user: req.user.id },
+          { user: req.user._id },
           { $set: profileFields },
           { new: true }
         )
@@ -70,39 +72,50 @@ module.exports = {
   },
   getTesters: (req, res) => {
     const errors = {};
-    Profile.findOne({ user: req.user.id }).then(profile => {
+    Profile.findOne({ user: req.user._id })
+    .populate("testers")
+    .then(profile => {
       if(!profile){
-        errors.noprofile = 'There is no profle for this user';
+        errors.noprofile = 'There is no profile for this user';
         return res.status(404).json(errors)
       }
       res.json(profile.testers);
     })
-    .catch(err => res.json(err));
+    .catch(err => {console.log(err), res.json(err)});
   },
-  addTesters: (req, res) => {
-    const { errors, isValid } = validateTestersInput(req.body);
+  addTesters: async (req, res,next) => {
+    try {
+      const { errors } = validateTestersInput(req.body);
 
     // Check validation
-    if (!isValid) {
+    if (errors.email) {
       // Return any errors with 400 status
       return res.status(400).json(errors);
     }
+    const {email} = req.body
+    const newTester = new Tester({
+      email
+    });
 
-    Profile.findOne({ user: req.user.id }).then((profile) => {
-      const newTesters = {
-        fullName: req.body.fullName,
-        department: req.body.department,
-        email: req.body.email,
-      };
+    const tester = await newTester.save();
+
+    const profile = await Profile.findOne({ user: req.user._id })
+    
 
       // Add to testers array
-      profile.testers.unshift(newTesters);
+      profile.testers.push(tester);
 
-      profile.save().then((profile) => res.json(profile));
-    });
+      await profile.save();
+      
+     res.json(profile)
+    } catch (error) {
+      console.log(error)
+      res.status(500).json(error)
+    }
+    
   },
   removeTesters: (req, res) => {
-    Profile.findOne({ user: req.user.id })
+    Profile.findOne({ user: req.user._id })
       .then((profile) => {
         // Get remove index
         const removeIndex = profile.testers
@@ -113,8 +126,10 @@ module.exports = {
         profile.testers.splice(removeIndex, 1);
 
         // Save
-        profile.save().then((profile) => res.json(profile));
+        profile
+        .save()
+        .then((profile) => res.json(profile));
       })
-      .catch((err) => res.status(400).json(err));
+      .catch((err) => res.status(400).json({err}));
   },
 };

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const testers = require("../validation/org/testers");
 const Schema = mongoose.Schema;
 
 const QuestionSetSchema = new Schema(
@@ -14,7 +15,7 @@ const QuestionSetSchema = new Schema(
     questions: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "quizzes",
+        ref: "quizzes", 
       },
     ],
 

@@ -5,10 +5,7 @@ const { auth } = require("../../controllers/authcontroller");
 // Org controller
 const {
   getCurrentOrg,
-  editOrgProgile,
-  addTesters,
-  removeTesters,
-  getTesters,
+  editOrgProgile
 } = require("../../controllers/Org/orgprofile");
 // User conrtoller
 const {
@@ -23,26 +20,10 @@ const {
 // @access  Private
 router.get("/org", auth, getCurrentOrg);
 
-// @route   GET api/profile/org/testers
-// @desc    Get testers from profile array
-// @access  Private
-router.get("/org/testers", auth, getTesters);
-
 // @route   post api/profile/org
 // @desc    create or edit user profile
 // @access  Private
 router.post("/org", auth, editOrgProgile);
-
-// @route   post api/profile/org/testers
-// @desc    Add testers to profile array
-// @access  Private
-router.post("/org/testers", auth, addTesters);
-
-// @route   DELETE api/profile/org/testers/:testers_id
-// @desc    Remove testers from profile array
-// @access  Private
-
-router.delete("/org/testers/:testers_id", auth, removeTesters);
 
 //                            Users Routes
 

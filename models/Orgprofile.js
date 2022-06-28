@@ -31,21 +31,11 @@ const OrgprofileSchema = new Schema({
     type: String,
     required: true,
   },
-  testers: [
+  testers:[
     {
-      fullName: {
-        type: String,
-        required: true,
-      },
-      department: {
-        type: String,
-        required: true,
-      },
-      email: {
-        type: String,
-        required: true,
-      }
-    },
+      type:Schema.Types.ObjectId,
+      ref:"testers"
+    }
   ],
   date: {
     type: Date,
@@ -53,4 +43,14 @@ const OrgprofileSchema = new Schema({
   },
 })
 
-module.exports = orgProfile = mongoose.model('OrgProfile', OrgprofileSchema)
+
+
+
+OrgprofileSchema.post("save", async(doc, next)=>{
+  await doc.populate("testers")
+  next()
+})
+
+module.exports = orgProfile = mongoose.model("OrgProfile", OrgprofileSchema);
+
+

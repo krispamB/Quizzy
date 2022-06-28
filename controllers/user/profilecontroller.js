@@ -8,7 +8,7 @@ const validateProfileInput = require('../../validation/user/profile');
 const Profile = require('../../models/Profile');
 
 // Load user model
-const User = require('../../models/User');
+const {User} = require('../../models/User');
 
 
 module.exports = {

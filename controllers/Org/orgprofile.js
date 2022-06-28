@@ -99,6 +99,7 @@ module.exports = {
 
     const tester = await newTester.save();
 
+
     const profile = await Profile.findOne({ user: req.user._id })
     
 
@@ -113,12 +114,13 @@ module.exports = {
       res.status(500).json(error)
     }
     
+
   },
   removeTesters: (req, res) => {
     Profile.findOne({ user: req.user._id })
       .then((profile) => {
         // Get remove index
-        const removeIndex = profile.testers
+        const removeIndex = profile.testers<<<<<<< patch/quiz-auth-update
           .map((item) => item.id)
           .indexOf(req.params.testers_id);
 

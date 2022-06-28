@@ -1,11 +1,11 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 
 // Create new Schema
 const OrgprofileSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
-    ref: "orgs",
+    ref: 'orgs',
   },
   handle: {
     type: String,
@@ -41,7 +41,8 @@ const OrgprofileSchema = new Schema({
     type: Date,
     default: Date.now,
   },
-});
+})
+
 
 
 
@@ -51,3 +52,5 @@ OrgprofileSchema.post("save", async(doc, next)=>{
 })
 
 module.exports = orgProfile = mongoose.model("OrgProfile", OrgprofileSchema);
+
+

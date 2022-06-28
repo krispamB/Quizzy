@@ -29,6 +29,19 @@ module.exports = {
           password: req.body.password,
           password2: req.body.password2,
         });
+        
+        // $password = password_hash($PASSWORD_DEFAULT);
+
+        // //generate code
+        // $set='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        // $code=substr(str_shuffle($set), 0, 12);
+
+        // $password2 = password_hash($PASSWORD_DEFAULT);
+
+        // //generate code
+        // $set='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        // $code=substr(str_shuffle($set), 0, 12);
+
 
         bcrypt.genSalt(10, (err, salt) => {
           bcrypt.hash(newOrg.password, salt, (err, hash) => {

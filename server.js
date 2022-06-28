@@ -2,13 +2,16 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const passport = require('passport');
+const cors = require('cors');
 
 const users = require('./routes/api/users');
 const profile = require('./routes/api/profile');
 const complaint = require('./routes/api/complaint');
 const quizRouter = require('./routes/api/quiz');
+const filter = require('./routes/api/filter');
 
 const app = express();
+app.use(cors({ origin: '*' }));
 
 // bodyParser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -35,7 +38,8 @@ app.use('/api/users', users);
 app.use('/api/profile', profile);
 app.use('/api/complaint', complaint);
 app.use('/api/quiz', quizRouter);
+app.use('/api/filter', filter);
 
-const port = 8000; 
+const port = process.env.PORT || 5000;
 
 app.listen(port, () => console.log(`Server running  on port ${port}`));

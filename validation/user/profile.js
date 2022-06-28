@@ -20,7 +20,7 @@ module.exports = function validateProfileInput(data) {
   }
 
   if(Validator.isEmpty(data.username)) {
-    errors.username = 'Account field is required';
+    errors.username = 'username field is required';
   }
 
   if(Validator.isEmpty(data.accounttype)) {

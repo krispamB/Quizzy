@@ -40,6 +40,6 @@ router.get("/user", auth, profileCurrent);
 // @route   post api/profile
 // @desc    create or edit user profile
 // @access  Private
-router.post("/user", auth, profile);
+router.patch("/user", auth, profile);
 
 module.exports = router;

@@ -14,19 +14,27 @@ const ProfileSchema = new Schema({
   },
   username: {
     type: String,
-    required: true
+    required: false
+  },
+  name: {
+    type: String,
+    required: false
+  },
+  email: {
+    type: String,
+    required: false
   },
   accounttype: {
     type: String,
-    required: true
+    required: false
   },
   password: {
     type: String,
-    required: true
+    required: false
   },
   password2: {
     type: String,
-    required: true
+    required: false
   },
   date: {
     type: Date,

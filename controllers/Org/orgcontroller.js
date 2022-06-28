@@ -18,7 +18,8 @@ module.exports = {
       return res.status(400).json(errors);
     }
 
-    Org.findOne({ email: req.body.email }).then((org) => {
+    Org.findOne({ email: req.body.email })
+    .then((org) => {
       if (org) {
         return res.status(400).json({ email: "Email already exists" });
       } else {

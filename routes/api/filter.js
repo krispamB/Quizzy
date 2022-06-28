@@ -1,16 +1,17 @@
 const express = require("express");
+const Testers = require("../../models/Testers");
 const router = express.Router();
-const {User} = require('../../models/User')
+
 
 router.get('/', async(req, res) => {
   const filter = req.query;
   // console.log(filter)
-  await User.find()
-  .then((users) => {
-    const filteredUser = users.filter(user => {
-      user.username === filter
+  await Testers.find()
+  .then((testers) => {
+    const filteredtester = testers.filter(testers => {
+      testers.email === filter
     });
-    res.json(filteredUser);
+    res.json(filteredtester);
   })
   .catch(err => res.status(404).json(err))
 });

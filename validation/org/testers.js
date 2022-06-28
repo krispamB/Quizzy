@@ -23,7 +23,7 @@ module.exports = function validateTestersInput(data) {
 
   // Deepartment validations
   if (!Validator.isLength(data.department, { min: 2, max: 30 })) {
-    errors.department = 'Department must be between 2 and 30 characters'<<<<<<< patch/quiz-auth-update
+    errors.department = 'Department must be between 2 and 30 characters'
   }
 
   if (Validator.isEmpty(data.department)) {

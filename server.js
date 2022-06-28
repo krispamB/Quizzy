@@ -40,6 +40,6 @@ app.use('/api/complaint', complaint);
 app.use('/api/quiz', quizRouter);
 app.use('/api/filter', filter);
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 8000;
 
 app.listen(port, () => console.log(`Server running  on port ${port}`));

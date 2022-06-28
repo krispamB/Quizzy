@@ -120,7 +120,7 @@ module.exports = {
     Profile.findOne({ user: req.user._id })
       .then((profile) => {
         // Get remove index
-        const removeIndex = profile.testers<<<<<<< patch/quiz-auth-update
+        const removeIndex = profile.testers
           .map((item) => item.id)
           .indexOf(req.params.testers_id);
 

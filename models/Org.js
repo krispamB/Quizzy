@@ -19,9 +19,12 @@ const OrgSchema = new Schema({
     type: String,
     required: true
   },
-  password2: {
-    type: String,
-
+  isVerified: {
+    type: Boolean,
+    default: false
+  },
+  token: {
+    type: String
   },
   date: {
     type: Date,

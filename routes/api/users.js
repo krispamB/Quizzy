@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { registerUser, loginUser } = require('../../controllers/user/usercontroller');
-const { registerOrg, loginOrg } = require('../../controllers/Org/orgcontroller');
+const { registerOrg, loginOrg, verifyAccount } = require('../../controllers/Org/orgcontroller');
 const { auth } = require('../../controllers/authcontroller');
 
 
@@ -15,6 +15,11 @@ router.get('/test', (req, res) => res.json({msg: "Users Works"}));
 // @desc    Register new organisation
 // @access  Public
 router.post('/register/org', registerOrg);
+
+// @route   POST api/users/confirmation/:token
+// @desc    Register new organisation
+// @access  Public
+router.get('/confirmation/:token', verifyAccount)
 
 // @route   POST api/users/register/user
 // @desc    Register new user

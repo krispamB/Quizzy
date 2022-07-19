@@ -46,11 +46,6 @@ const OrgprofileSchema = new Schema({
 
 
 
-OrgprofileSchema.post("save", async(doc, next)=>{
-  await doc.populate("testers")
-  next()
-})
-
 module.exports = orgProfile = mongoose.model("OrgProfile", OrgprofileSchema);
 
 

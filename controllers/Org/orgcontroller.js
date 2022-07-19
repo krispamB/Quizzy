@@ -1,7 +1,11 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const secret = require('../../config/keys').secretOrKey
 const crypto = require('crypto')
+const { verifyEmail } = require('../mails')
+
+// .env
+const secret = process.env.SECRET_KEY
+const HOST = process.env.HOST
 
 // Load org model
 const Org = require('../../models/Org')
@@ -40,10 +44,44 @@ module.exports = {
             newOrg.password = hash
             newOrg
               .save()
-              .then((user) => res.json(user))
+              .then((user) => {
+                const url = `http://${HOST}/api/users/confirmation/${token}`
+                verifyEmail(orgname, email, url)
+                res.status(201).json({
+                  success: true,
+                  message:
+                    'Account has created successfuly, please verify your email',
+                  data: user,
+                })
+              })
               .catch((err) => console.log(err))
           })
         })
+      }
+    })
+  },
+
+  verifyAccount: (req, res, next) => {
+    Org.findOne({ token: req.params.token }).then((user) => {
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' })
+      } else if (user.isVerified === true) {
+        return res.status(200).json({ msg: 'User has already been verified' })
+      } else {
+        // Change isVerified to true
+        user.isVerified = true
+        user.token = null
+        user
+          .save()
+          .then((user) => {
+            res.status(200).json({
+              success: true,
+              msg: 'Account verified successfully',
+            })
+          })
+          .catch((err) => {
+            res.status(500).json(err.message)
+          })
       }
     })
   },
@@ -56,40 +94,37 @@ module.exports = {
       return res.status(400).json(errors)
     }
 
-    const email = req.body.email
-    const password = req.body.password
+    const { email, password } = req.body
 
     // find org by email
     Org.findOne({ email }).then((org) => {
       // check for org
       if (!org) {
-        errors.email = 'User not found'
+        errors.email = `The email adress ${email} is not associated with any account, please try again`
         return res.status(404).json(errors)
-      }
-      // check password
-      bcrypt.compare(password, org.password).then((isMatch) => {
-        if (isMatch) {
-          // User matched
+      } else if (!org.isVerified === true) {
+        errors.isVerified = 'User has not been verified yet'
+        return res.status(401).json(errors)
+      } else if (!bcrypt.compareSync(password, org.password)) {
+        errors.password = 'Password incorrect'
+        return res.status(400).json(errors)
+      } else {
+        // User matched
+        const payload = {
+          id: org.id,
+          orgname: org.orgname,
+          email: org.email,
+          role: 'ORG',
+        } // Payload
 
-          const payload = {
-            id: org.id,
-            orgname: org.orgname,
-            email: org.email,
-            role: 'ORG',
-          } // Payload
-
-          // Sign token
-          jwt.sign(payload, secret, { expiresIn: 7200 }, (err, token) => {
-            res.json({
-              success: true,
-              token: 'Bearer ' + token,
-            })
+        // Sign token
+        jwt.sign(payload, secret, { expiresIn: 7200 }, (err, token) => {
+          res.json({
+            success: true,
+            token: 'Bearer ' + token,
           })
-        } else {
-          errors.password = 'Password incorrect'
-          return res.status(400).json(errors)
-        }
-      })
+        })
+      }
     })
   },
 }

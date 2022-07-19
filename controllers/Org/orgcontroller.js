@@ -1,105 +1,133 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const secret = require("../../config/keys").secretOrKey;
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+const crypto = require('crypto')
+const { verifyEmail } = require('../mails')
+
+// .env
+const secret = process.env.SECRET_KEY
+const HOST = process.env.HOST
 
 // Load org model
-const Org = require("../../models/Org");
+const Org = require('../../models/Org')
 
 // Load input validation
-const validateRegisterInput = require("../../validation/org/register");
-const validateLoginInput = require("../../validation/org/login");
+const validateRegisterInput = require('../../validation/org/register')
+const validateLoginInput = require('../../validation/org/login')
 
 module.exports = {
   registerOrg: (req, res) => {
-    const { errors, isValid } = validateRegisterInput(req.body);
+    const { orgname, email, address, password } = req.body
+    const { errors, isValid } = validateRegisterInput(req.body)
 
     // Check Validation
     if (!isValid) {
-      return res.status(400).json(errors);
+      return res.status(400).json(errors)
     }
+
 
     Org.findOne({ email: req.body.email })
     .then((org) => {
+
       if (org) {
-        return res.status(400).json({ email: "Email already exists" });
+        return res.status(400).json({ email: 'Email already exists' })
       } else {
+        const token = crypto.randomBytes(16).toString('hex')
         const newOrg = new Org({
-          orgname: req.body.orgname,
-          email: req.body.email,
-          address: req.body.address,
-          password: req.body.password,
-          password2: req.body.password2,
-        });
-        
-        // $password = password_hash($PASSWORD_DEFAULT);
-
-        // //generate code
-        // $set='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-        // $code=substr(str_shuffle($set), 0, 12);
-
-        // $password2 = password_hash($PASSWORD_DEFAULT);
-
-        // //generate code
-        // $set='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-        // $code=substr(str_shuffle($set), 0, 12);
-
+          orgname,
+          email,
+          address,
+          password,
+          token,
+        })
+        console.log(newOrg)
 
         bcrypt.genSalt(10, (err, salt) => {
           bcrypt.hash(newOrg.password, salt, (err, hash) => {
-            if (err) throw err;
-            newOrg.password = hash;
+            if (err) throw err
+            newOrg.password = hash
             newOrg
               .save()
-              .then((user) => res.json(user))
-              .catch((err) => console.log(err));
-          });
-        });
+              .then((user) => {
+                const url = `http://${HOST}/api/users/confirmation/${token}`
+                verifyEmail(orgname, email, url)
+                res.status(201).json({
+                  success: true,
+                  message:
+                    'Account has created successfuly, please verify your email',
+                  data: user,
+                })
+              })
+              .catch((err) => console.log(err))
+          })
+        })
       }
-    });
+    })
+  },
+
+  verifyAccount: (req, res, next) => {
+    Org.findOne({ token: req.params.token }).then((user) => {
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' })
+      } else if (user.isVerified === true) {
+        return res.status(200).json({ msg: 'User has already been verified' })
+      } else {
+        // Change isVerified to true
+        user.isVerified = true
+        user.token = null
+        user
+          .save()
+          .then((user) => {
+            res.status(200).json({
+              success: true,
+              msg: 'Account verified successfully',
+            })
+          })
+          .catch((err) => {
+            res.status(500).json(err.message)
+          })
+      }
+    })
   },
 
   loginOrg: (req, res) => {
-    const { errors, isValid } = validateLoginInput(req.body);
+    const { errors, isValid } = validateLoginInput(req.body)
 
     // Check Validation
     if (!isValid) {
-      return res.status(400).json(errors);
+      return res.status(400).json(errors)
     }
 
-    const email = req.body.email;
-    const password = req.body.password;
+    const { email, password } = req.body
 
     // find org by email
     Org.findOne({ email }).then((org) => {
       // check for org
       if (!org) {
-        errors.email = "User not found";
-        return res.status(404).json(errors);
+        errors.email = `The email adress ${email} is not associated with any account, please try again`
+        return res.status(404).json(errors)
+      } else if (!org.isVerified === true) {
+        errors.isVerified = 'User has not been verified yet'
+        return res.status(401).json(errors)
+      } else if (!bcrypt.compareSync(password, org.password)) {
+        errors.password = 'Password incorrect'
+        return res.status(400).json(errors)
+      } else {
+        // User matched
+        const payload = {
+          id: org.id,
+          orgname: org.orgname,
+          email: org.email,
+          role: 'ORG',
+        } // Payload
+
+        // Sign token
+        jwt.sign(payload, secret, { expiresIn: 7200 }, (err, token) => {
+          res.json({
+            success: true,
+            token: 'Bearer ' + token,
+          })
+        })
       }
-      // check password
-      bcrypt.compare(password, org.password).then((isMatch) => {
-        if (isMatch) {
-          // User matched
-
-          const payload = {
-            id: org.id,
-            orgname: org.orgname,
-            email: org.email,
-            role: "ORG",
-          }; // Payload
-
-          // Sign token
-          jwt.sign(payload, secret, { expiresIn: 7200 }, (err, token) => {
-            res.json({
-              success: true,
-              token: "Bearer " + token,
-            });
-          });
-        } else {
-          errors.password = "Password incorrect";
-          return res.status(400).json(errors);
-        }
-      });
-    });
+    })
   },
-};
+}

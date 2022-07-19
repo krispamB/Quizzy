@@ -1,122 +1,90 @@
-const express = require("express");
-const Quizes = require("../../models/Quizes");
-const Set = require("../../models/QuestionSet");
-const Testers = require("../../models/Testers")
-const { auth, isOrg } = require("../../controllers/authcontroller");
-const crypto = require("crypto");
+const express = require('express')
+const router = express.Router()
+const Quizes = require('../../models/Quizes')
+const Set = require('../../models/QuestionSet')
+const { auth, isOrg } = require('../../controllers/authcontroller')
 
 const {
-  answer,
-  answeredQuizzes,
-  answeredQuizzesBySetId,
-} = require("../../controllers/Quiz/answer.controller");
-const router = express.Router();
+  questionSet,
+  createQuestion,
+  getSet,
+  getAllSet,
+  takeQuiz,
+  quizCode,
+} = require('../../controllers/Quiz/create.controller')
 
-//@route    GET api/quiz/test
+// @route    GET api/quiz/test
 // @desc    Test quiz route
 // @access  Public
-router.get("/test", async (req, res) => {
-  try {
-    const questions = await Quizes.find().select(["-answer"]);
-    res.json(questions);
-  } catch (err) {
-    res.json({ msg: err });
-  }
-});
+// router.get('/test', async (req, res) => {
+//   try {
+//     const questions = await Quizes.find().select(['-answer'])
+//     res.json(questions)
+//   } catch (err) {
+//     res.json({ msg: err })
+//   }
+// })
 
-//@route    POST api/quiz/:set_id/questions
+// @route GET api/quiz
+// @description Get all set from org
+// @access Private
+router.get('/', auth, getAllSet)
+
+// @route GET api/quiz/:question_id
+// @description Get set by set_id
+// @access Private
+router.get('/set/:question_id', auth, getSet)
+
+// @route PATCH api/quiz/mail
+// @description send mail to testers
+// @access Private
+router.get('/mail', auth, quizCode)
+
+// @route GET api/quiz/test
+// @description Get quiz questions
+// @access Public
+router.get('/test', takeQuiz)
+
+// @route POST api/quiz
+// @description Question Set
+// @access Private
+router.post('/', auth, questionSet)
+
+// @route PATCH api/quiz/:question_id/question
+// @description Create Question
+// @access Private
+router.patch('/question/:question_id', auth, createQuestion)
+
+// @route    POST api/quiz/:set_id/questions
 // @desc    Test questions route
 // @access  Public
-router.post("/:set_id/questions", async (req, res) => {
-  try {
-    let questions = req.body;
+// router.post('/:set_id/questions', async (req, res) => {
+//   try {
+//     let questions = req.body
 
-    const set = await Set.findById(req.params.set_id);
+//     const set = await Set.findById(req.params.set_id)
 
-    if (!set) return res.status(404).json({ msg: "set not found." });
+//     if (!set) return res.status(404).json({ msg: 'Set not found.' })
 
-    questions = questions.map((x) => {
-      return {
-        ...x,
-        set_id: req.params.set_id,
-      };
-    });
+//     questions = questions.map((x) => {
+//       return {
+//         ...x,
+//         set_id: req.params.set_id,
+//       }
+//     })
 
-    const saved_questions = await Quizes.insertMany(questions);
+//     const saved_questions = await Quizes.insertMany(questions)
 
-    saved_questions.map((x) => set.questions.push(x._id));
+//     saved_questions.map((x) => set.questions.push(x._id))
 
-    await set.save();
+//     await set.save()
 
-    res.json({ msg: saved_questions });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json(error);
-  }
-});
-
-/**
- * @route POST api/quiz/:set_id/question
- * @description Create Question
- * @access Public
- */
-router.post("/:set_id/question", async (req, res) => {
-  try {
-    const { question, options, answer } = req.body;
-
-    const set = await Set.findById(req.params.set_id);
-
-    if (!set) return res.status(404).json({ msg: "set not found." });
-
-    const newQuestion = new Quizes({
-      question,
-      options: [options],
-      answer,
-      set_id: req.params.set_id,
-    });
-
-    await newQuestion.save();
-
-    set.questions.push(newQuestion._id);
-
-    await set.save();
-
-    res.json({ msg: newQuestion });
-  } catch (error) {
-    res.status(500).json(error);
-  }
-});
-
-/**
- * @route POST api/quiz/set
- * @description Question Set
- * @access Public
- */
-router.post("/set", async (req, res) => {
-  try {
-    const {
-      title,
-      instruction,
-      duration: { hours, minutes, seconds },
-    } = req.body;
-
-    const newSet = new Set({
-      title,
-      instruction,
-      duration: {
-        hours,
-        minutes,
-        seconds,
-      },
-    });
-
-    await newSet.save();
-
-    res.json({ msg: newSet });
-  } catch (error) {
-    res.status(500).json(error);
-  }
-});
+//     res.json({ msg: saved_questions })
+//   } catch (error) {
+//     console.log(error)
+//     res.status(500).json(error)
+//   }
+// })
 
 /**
  * @route GET api/quiz/sets
@@ -124,14 +92,14 @@ router.post("/set", async (req, res) => {
  * @access Public
  */
 
-router.get("/sets", async (req, res) => {
-  try {
-    const sets = await Set.find({}).populate("questions", ["-answer"]);
-    res.json({ msg: sets });
-  } catch (error) {
-    res.status(500).json(error);
-  }
-});
+// router.get('/sets', async (req, res) => {
+//   try {
+//     const sets = await Set.find({}).populate('questions', ['-answer'])
+//     res.json({ msg: sets })
+//   } catch (error) {
+//     res.status(500).json(error)
+//   }
+// })
 
 /**
  * @route GET api/quiz/set/:id
@@ -139,17 +107,17 @@ router.get("/sets", async (req, res) => {
  * @access Public
  */
 
-router.get("/set/:id", async (req, res) => {
-  try {
-    const set = await Set.findById(req.params.id).populate("questions", [
-      "-answer",
-    ]);
+// router.get('/set/:id', async (req, res) => {
+//   try {
+//     const set = await Set.findById(req.params.id).populate('questions', [
+//       '-answer',
+//     ])
 
-    res.status(200).json({ msg: set });
-  } catch (error) {
-    res.status(500).json(error);
-  }
-});
+//     res.status(200).json({ msg: set })
+//   } catch (error) {
+//     res.status(500).json(error)
+//   }
+// })
 
 /**
  * @route POST api/quiz/answer
@@ -157,58 +125,20 @@ router.get("/set/:id", async (req, res) => {
  * @access Private
  */
 
-router.post("/answer", auth, answer);
+// router.post('/answer', auth, answer)
 
 /**
  * @route GET api/quiz/answered-quizzes
  * @description Get answers
  * @access Private
  */
-router.get("/answered-quizzes", auth, isOrg, answeredQuizzes);
+// router.get('/answered-quizzes', auth, isOrg, answeredQuizzes)
 
 /**
  * @route GET api/quiz/:set_id/answered-quizzes
  * @description Get answers
  * @access Private
  */
-router.get("/:set_id/answered-quizzes", auth, answeredQuizzesBySetId);
+// router.get('/:set_id/answered-quizzes', auth, answeredQuizzesBySetId)
 
-
-// Org controller
-const {
-  addTesters,
-  removeTesters,
-  getTesters,
-} = require("../../controllers/Org/orgprofile");
-
-//                            Testers Routes
-
-
-router.get('/try', (req, res) => res.json({msg: "testers Works"}));
-
-// @route   GET api/quiz/testers
-// @desc    Get testers from profile array
-// @access  Private
-router.get("/testers", auth, getTesters);
-
-// @route   post api/quiz/testers
-// @desc    Add testers to profile array
-// @access  Private
-router.post("/testers", auth, addTesters);
-
-// @route   DELETE api/quiz/testers/:testers_id
-// @desc    Remove testers from profile array
-// @access  Private
-
-router.delete("/testers/:testers_id", auth, removeTesters);
-
-
-// const options = ["20", "30", "40", "50"];
-
-// const option = {};
-// const letters = ["A", "B", "C", "D", "E", "F", "G"];
-// options.map((x, i) => {
-//   option[letters[i]] = x;
-// });
-
-module.exports = router;
+module.exports = router

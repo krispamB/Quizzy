@@ -13,15 +13,18 @@ const OrgSchema = new Schema({
   },
   address: {
     type: String,
-    required: true
+    required: false
   },
   password: {
     type: String,
     required: true
   },
-  password2: {
-    type: String,
-
+  isVerified: {
+    type: Boolean,
+    default: false
+  },
+  token: {
+    type: String
   },
   date: {
     type: Date,

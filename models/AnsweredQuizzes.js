@@ -7,10 +7,6 @@ const AnsweredQuizzes = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",
     },
-    // org: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "orgs",
-    // },
     question: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "quizzes",

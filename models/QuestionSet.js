@@ -1,9 +1,13 @@
-const mongoose = require("mongoose");
-const testers = require("../validation/org/testers");
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose')
+const testers = require('../validation/org/testers')
+const Schema = mongoose.Schema
 
 const QuestionSetSchema = new Schema(
   {
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'orgs',
+    },
     title: {
       type: String,
       required: true,
@@ -12,33 +16,19 @@ const QuestionSetSchema = new Schema(
       type: String,
       required: true,
     },
-    questions: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "quizzes", 
-      },
-    ],
-
+    questions: [],
     duration: {
-      hours: {
-        type: Number,
-        default: 0,
-      },
-
-      minutes: {
-        type: Number,
-        default: 0,
-      },
-
-      seconds: {
-        type: Number,
-        default: 0,
-      },
+      type: String,
+      required: true,
     },
+    quizCode: {
+      type: String,
+    },
+    testers: [],
   },
   { timestamps: true }
-);
+)
 
-const QuestionSet = mongoose.model("sets", QuestionSetSchema);
+const QuestionSet = mongoose.model('sets', QuestionSetSchema)
 
-module.exports = QuestionSet;
+module.exports = QuestionSet

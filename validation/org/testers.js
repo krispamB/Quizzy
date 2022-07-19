@@ -4,8 +4,7 @@ const isEmpty = require('../isEmpty')
 module.exports = function validateTestersInput(data) {
   let errors = {}
 
-
-  data.email = isEmpty(data.email) ? "" : data.email;
+  data.email = isEmpty(data.email) ? '' : data.email
   // console.log(data)
 
   data.email = isEmpty(data.email) ? '' : data.email
@@ -30,7 +29,6 @@ module.exports = function validateTestersInput(data) {
     errors.department = 'Department field is required'
   }
 
-
   // Email validations
 
   if (!Validator.isEmail(data.email)) {
@@ -41,10 +39,8 @@ module.exports = function validateTestersInput(data) {
     errors.email = 'Email field is required'
   }
 
-  
-
   return {
     errors,
     // isValid: isEmpty(),
-  };
-};
+  }
+}

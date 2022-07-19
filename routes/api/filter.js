@@ -1,6 +1,5 @@
 const express = require("express");
 const AnsweredQuizes = require("../../models/AnsweredQuizzes");
-const Testers = require("../../models/Testers");
 const router = express.Router();
 
 

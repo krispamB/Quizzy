@@ -4,6 +4,7 @@ const random = require('randomstring')
 const { quizCodeEmail } = require('../mails')
 
 const validateQuizinput = require('../../validation/Quiz/createSet')
+const validateQuestion = require('../../validation/Quiz/createQuestion')
 
 module.exports = {
   questionSet: async (req, res) => {
@@ -40,6 +41,13 @@ module.exports = {
     }
   },
   createQuestion: (req, res) => {
+    const { errors, isValid } = validateQuestion(req.body)
+
+    // Check Validation
+    if (!isValid) {
+      return res.status(400).json(errors)
+    }
+
     const question_id = req.params.question_id
     const { question, options, answer } = req.body
 

@@ -5,6 +5,7 @@ const { quizCodeEmail } = require('../mails')
 
 const validateQuizinput = require('../../validation/Quiz/createSet')
 const validateQuestion = require('../../validation/Quiz/createQuestion')
+const validateLanding = require('../../validation/Quiz/landing')
 
 module.exports = {
   questionSet: async (req, res) => {
@@ -126,9 +127,20 @@ module.exports = {
     })
   },
   takeQuiz: async (req, res) => {
+    const { errors, isValid } = validateLanding(req.body)
+
+    // Check Validation
+    if (!isValid) {
+      return res.status(400).json(errors)
+    }
+
     try {
       const { quizCode, email } = req.body
       const set = await Set.findOne({ quizCode })
+      const questionsWithoutAnswers = set.questions.map((question) => {
+        const {answer, ...others} = question;
+        return others;
+      })
       if (!set) {
         res.status(404).json({
           message: `Check your email to confirm that ${quizCode} is the code that was sent to you`,
@@ -148,7 +160,7 @@ module.exports = {
           res.status(200).json({
             success: true,
             message: `You can now take your test, you have ${set.duration}`,
-            data: set.questions,
+            data: questionsWithoutAnswers,
           })
         }
       }

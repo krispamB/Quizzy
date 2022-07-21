@@ -43,7 +43,7 @@ router.post('/mail', auth, quizCode)
 // @route GET api/quiz/test
 // @description Get quiz questions
 // @access Public
-router.get('/test', takeQuiz)
+router.post('/test', takeQuiz)
 
 // @route POST api/quiz
 // @description Question Set

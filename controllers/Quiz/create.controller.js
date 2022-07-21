@@ -75,7 +75,7 @@ module.exports = {
           .catch((err) => {
             console.log(err)
           })
-        set.questions.unshift(questions)
+        set.questions.push(questions)
         set.save().then((set) => {
           console.log(set)
         })

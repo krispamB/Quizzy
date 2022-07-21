@@ -16,7 +16,7 @@ module.exports = {
   quizCodeEmail: async (time, quizCode, email) => {
     const html = `<h1>Quiz Code</h1>
                   <p>Good Day</p>
-                  <p>Your Quiz Code for your test at ${time} is</p>
+                  <p>The Quiz Code for your test on ${time} is</p>
                   <p><strong>${quizCode}</strong></p>
                   <p>Thank you</p>`
 

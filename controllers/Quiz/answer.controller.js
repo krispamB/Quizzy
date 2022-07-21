@@ -1,37 +1,71 @@
-const AnsweredQuizesSchema = require("../../models/AnsweredQuizzes");
-const Quizes = require("../../models/Quizes");
+const Answered = require('../../models/AnsweredQuizzes')
+const Quizes = require('../../models/Quizes')
+const Set = require('../../models/QuestionSet')
 
 module.exports = {
   answer: async (req, res) => {
+    const { array } = req.body
+    console.log(array)
+    const { quizCode, email } = req.params
     try {
-      const { body, user } = req;
+      const set = await Set.findOne({ quizCode })
+      const answersWithoutQuestion = await set.questions.map((question) => {
+        const { answer } = question
+        return answer
+      })
+      console.log(answersWithoutQuestion)
 
-      if (!body.length) return res.status(400).json({ msg: "invalid payload" });
-
-      await Promise.all(
-        body?.map(async (x) => {
-          if (await hasBeenAnswered(user._id, x.question_id)) {
-            return;
+      const compareAnswers = (correctAns, userAns) => {
+        const arr = []
+        for (let i = 0; i < correctAns.length; ++i) {
+          if (correctAns[i] === userAns[i]) {
+            arr.push(true)
+          } else {
+            arr.push(false)
           }
-          const isCorrect = await isCorrectAnswer(x.question_id, x.answer);
-          const quiz = await findQuiz(x.question_id);
-          const newAnsweredQuiz = new AnsweredQuizesSchema({
-            user: user._id,
-            orgs: x.org_id,
-            question: x.question_id,
-            chosenAnswer: x.answer,
-            isCorrect,
-            set_id: quiz.set_id,
-          });
+        }
+        return arr
+      }
+      console.log(compareAnswers)
+      const data = compareAnswers(answersWithoutQuestion, array)
 
-          await newAnsweredQuiz.save();
+      const score = (compared) => {
+        let mark = 0
+        for (let i = 0; i < compared.length; ++i) {
+          if (compared[i] === true) {
+            mark = mark + 1
+          } else {
+            mark = mark + 0
+          }
+        }
+        return mark
+      }
+      const mark = score(data)
+      console.log(mark)
+
+      if (!set) {
+        res.status(404).json({
+          success: false,
+          message: 'Not found',
         })
-      );
-
-      res.json({ msg: "Answers stored correctly." });
+      } else {
+        const newAnswer = new Answered({
+          user: set.user,
+          quizCode,
+          email,
+          mark,
+        })
+        newAnswer
+          .save()
+          .then(
+            res.status(201).json({
+              success: true,
+              message: `Your test has been marked, you scored ${mark} out of ${answersWithoutQuestion.length}`,
+            })
+          )
+      }
     } catch (error) {
-      console.log(error);
-      res.status(500).json(error);
+      console.log(error)
     }
   },
 
@@ -41,18 +75,18 @@ module.exports = {
         // user: req.user._id,
       })
         .populate({
-          path: "question",
-          select: ["-answer"],
+          path: 'question',
+          select: ['-answer'],
         })
         .populate({
-          path: "user",
-          select: ["-password"],
-        });
+          path: 'user',
+          select: ['-password'],
+        })
 
-      return res.status(200).json({ msg: answeredquizzes });
+      return res.status(200).json({ msg: answeredquizzes })
     } catch (error) {
-      console.log(error);
-      return res.status(500).json(error);
+      console.log(error)
+      return res.status(500).json(error)
     }
   },
 
@@ -61,43 +95,43 @@ module.exports = {
       set_id: req.params.set_id,
     })
       .populate({
-        path: "question",
-        select: ["-answer"],
+        path: 'question',
+        select: ['-answer'],
       })
       .populate({
-        path: "user",
-        select: ["-password"],
-      });
+        path: 'user',
+        select: ['-password'],
+      })
 
-    res.status(200).json({ msg: result });
+    res.status(200).json({ msg: result })
   },
-};
+}
 
 const isCorrectAnswer = async (question_id, answer) => {
   try {
-    const question = await findQuiz(question_id);
+    const question = await findQuiz(question_id)
 
-    if (!question) return false;
+    if (!question) return false
 
-    return question.answer == answer;
+    return question.answer == answer
   } catch (error) {
-    throw error;
+    throw error
   }
-};
+}
 
 const hasBeenAnswered = async (user_id, question_id) => {
   try {
     const answer = await AnsweredQuizesSchema.findOne({
       user: user_id,
       question: question_id,
-    });
+    })
 
-    return answer ? true : false;
+    return answer ? true : false
   } catch (error) {
-    throw error;
+    throw error
   }
-};
+}
 
 const findQuiz = async (question_id) => {
-  return await Quizes.findById(question_id);
-};
+  return await Quizes.findById(question_id)
+}

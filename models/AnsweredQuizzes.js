@@ -4,25 +4,16 @@ const Schema = mongoose.Schema;
 const AnsweredQuizzes = new Schema(
   {
     user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
+      type: String
     },
-    question: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "quizzes",
-    },
-    chosenAnswer: {
+    quizCode: {
       type: String,
-      required: true,
     },
-
-    isCorrect: {
-      type: Boolean,
-      default: false,
+    email: {
+      type: String
     },
-    set_id: {
-      type: String,
-      required: true,
+    mark: {
+      type: Number
     },
   },
   { timestamps: true }

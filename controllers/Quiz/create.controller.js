@@ -89,6 +89,7 @@ module.exports = {
           message: 'Not found',
         })
       } else {
+        const quizCode = set.quizCode
         const title = set.title
         const questions = `${set.questions.length} Questions`
         const duration = `Quiz lasts for ${set.duration}`
@@ -101,6 +102,7 @@ module.exports = {
             questions,
             duration,
             testers: testers.toString(),
+            quizCode,
           },
         })
       }
@@ -137,10 +139,10 @@ module.exports = {
         function checkEmail(tester) {
           return tester === email.toString()
         }
-        if(set.testers.find(checkEmail) === undefined) {
+        if (set.testers.find(checkEmail) === undefined) {
           res.status(401).json({
             success: false,
-            message: 'Please check your email'
+            message: 'Please check your email',
           })
         } else {
           res.status(200).json({

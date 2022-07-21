@@ -125,6 +125,7 @@ module.exports = {
           res.json({
             success: true,
             token: 'Bearer ' + token,
+            data: org.orgname
           })
         })
       }

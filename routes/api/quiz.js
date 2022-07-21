@@ -38,7 +38,7 @@ router.get('/set/:question_id', auth, getSet)
 // @route PATCH api/quiz/mail
 // @description send mail to testers
 // @access Private
-router.get('/mail', auth, quizCode)
+router.post('/mail', auth, quizCode)
 
 // @route GET api/quiz/test
 // @description Get quiz questions

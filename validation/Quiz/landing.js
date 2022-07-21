@@ -16,8 +16,8 @@ module.exports = function validateLanding(data) {
     errors.email = 'Email field is required'
   }
 
-  return {
-    errors,
-    isValid: isEmpty(errors)
-  }
+  // return {
+  //   errors,
+  //   isValid: isEmpty(errors)
+  // }
 }

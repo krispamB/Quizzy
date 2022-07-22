@@ -11,7 +11,10 @@ const {
   getAllSet,
   takeQuiz,
   quizCode,
+  verify
 } = require('../../controllers/Quiz/create.controller')
+
+const { answer } = require('../../controllers/Quiz/answer.controller')
 
 // @route    GET api/quiz/test
 // @desc    Test quiz route
@@ -35,6 +38,11 @@ router.get('/', auth, getAllSet)
 // @access Private
 router.get('/set/:question_id', auth, getSet)
 
+// @route POST api/quiz/verify
+// @description Verify
+// @access Public
+router.post('/verify', verify)
+
 // @route PATCH api/quiz/mail
 // @description send mail to testers
 // @access Private
@@ -43,7 +51,7 @@ router.post('/mail', auth, quizCode)
 // @route GET api/quiz/test
 // @description Get quiz questions
 // @access Public
-router.post('/test', takeQuiz)
+router.get('/test/:quizCode', takeQuiz)
 
 // @route POST api/quiz
 // @description Question Set
@@ -54,6 +62,11 @@ router.post('/', auth, questionSet)
 // @description Create Question
 // @access Private
 router.patch('/question/:question_id', auth, createQuestion)
+
+// @route POST api/quiz/:quizCode/:email
+// @description Create Question
+// @access Public
+router.post('/:quizCode/:email', answer)
 
 // @route    POST api/quiz/:set_id/questions
 // @desc    Test questions route

@@ -6,6 +6,7 @@ const { verifyEmail } = require('../mails')
 // .env
 const secret = process.env.SECRET_KEY
 const HOST = process.env.HOST
+console.log(HOST)
 
 // Load org model
 const Org = require('../../models/Org')
@@ -39,7 +40,6 @@ module.exports = {
           password,
           token,
         })
-        console.log(newOrg)
 
         bcrypt.genSalt(10, (err, salt) => {
           bcrypt.hash(newOrg.password, salt, (err, hash) => {
@@ -48,7 +48,8 @@ module.exports = {
             newOrg
               .save()
               .then((user) => {
-                const url = `http://${HOST}/api/users/confirmation/${token}`
+                const url = `https://${HOST}/api/users/confirmation/${token}`
+                console.log(url)
                 verifyEmail(orgname, email, url)
                 res.status(201).json({
                   success: true,

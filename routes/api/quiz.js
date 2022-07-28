@@ -8,7 +8,6 @@ const {
   questionSet,
   createQuestion,
   getSet,
-  getAllSet,
   takeQuiz,
   quizCode,
   verify
@@ -16,17 +15,8 @@ const {
 
 const { answer } = require('../../controllers/Quiz/answer.controller')
 
-// @route    GET api/quiz/test
-// @desc    Test quiz route
-// @access  Public
-// router.get('/test', async (req, res) => {
-//   try {
-//     const questions = await Quizes.find().select(['-answer'])
-//     res.json(questions)
-//   } catch (err) {
-//     res.json({ msg: err })
-//   }
-// })
+const { getAllSet, getResult } = require('../../controllers/Org/dashboard')
+
 
 // @route GET api/quiz
 // @description Get all set from org
@@ -37,6 +27,11 @@ router.get('/', auth, getAllSet)
 // @description Get set by set_id
 // @access Private
 router.get('/set/:question_id', auth, getSet)
+
+// @route GET api/quiz/results/:quizCode
+// @description Get result by quizCode
+// @access Private
+router.get('/results/:quizCode', auth, getResult)
 
 // @route POST api/quiz/verify
 // @description Verify
@@ -67,91 +62,5 @@ router.patch('/question/:question_id', auth, createQuestion)
 // @description Create Question
 // @access Public
 router.post('/:quizCode/:email', answer)
-
-// @route    POST api/quiz/:set_id/questions
-// @desc    Test questions route
-// @access  Public
-// router.post('/:set_id/questions', async (req, res) => {
-//   try {
-//     let questions = req.body
-
-//     const set = await Set.findById(req.params.set_id)
-
-//     if (!set) return res.status(404).json({ msg: 'Set not found.' })
-
-//     questions = questions.map((x) => {
-//       return {
-//         ...x,
-//         set_id: req.params.set_id,
-//       }
-//     })
-
-//     const saved_questions = await Quizes.insertMany(questions)
-
-//     saved_questions.map((x) => set.questions.push(x._id))
-
-//     await set.save()
-
-//     res.json({ msg: saved_questions })
-//   } catch (error) {
-//     console.log(error)
-//     res.status(500).json(error)
-//   }
-// })
-
-/**
- * @route GET api/quiz/sets
- * @description Question Sets
- * @access Public
- */
-
-// router.get('/sets', async (req, res) => {
-//   try {
-//     const sets = await Set.find({}).populate('questions', ['-answer'])
-//     res.json({ msg: sets })
-//   } catch (error) {
-//     res.status(500).json(error)
-//   }
-// })
-
-/**
- * @route GET api/quiz/set/:id
- * @description A Question Set
- * @access Public
- */
-
-// router.get('/set/:id', async (req, res) => {
-//   try {
-//     const set = await Set.findById(req.params.id).populate('questions', [
-//       '-answer',
-//     ])
-
-//     res.status(200).json({ msg: set })
-//   } catch (error) {
-//     res.status(500).json(error)
-//   }
-// })
-
-/**
- * @route POST api/quiz/answer
- * @description Answer Question
- * @access Private
- */
-
-// router.post('/answer', auth, answer)
-
-/**
- * @route GET api/quiz/answered-quizzes
- * @description Get answers
- * @access Private
- */
-// router.get('/answered-quizzes', auth, isOrg, answeredQuizzes)
-
-/**
- * @route GET api/quiz/:set_id/answered-quizzes
- * @description Get answers
- * @access Private
- */
-// router.get('/:set_id/answered-quizzes', auth, answeredQuizzesBySetId)
 
 module.exports = router

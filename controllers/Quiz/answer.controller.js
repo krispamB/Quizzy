@@ -26,16 +26,16 @@ module.exports = {
         }
         return arr
       }
-      console.log(compareAnswers)
       const data = compareAnswers(answersWithoutQuestion, array)
+      console.log(data)
 
       const score = (compared) => {
         let mark = 0
         for (let i = 0; i < compared.length; ++i) {
           if (compared[i] === true) {
-            mark = mark + 1
+            mark += 1
           } else {
-            mark = mark + 0
+            mark += 0
           }
         }
         return mark
@@ -68,70 +68,4 @@ module.exports = {
       console.log(error)
     }
   },
-
-  answeredQuizzes: async (req, res) => {
-    try {
-      const answeredquizzes = await AnsweredQuizesSchema.find({
-        // user: req.user._id,
-      })
-        .populate({
-          path: 'question',
-          select: ['-answer'],
-        })
-        .populate({
-          path: 'user',
-          select: ['-password'],
-        })
-
-      return res.status(200).json({ msg: answeredquizzes })
-    } catch (error) {
-      console.log(error)
-      return res.status(500).json(error)
-    }
-  },
-
-  answeredQuizzesBySetId: async (req, res) => {
-    const result = await AnsweredQuizesSchema.find({
-      set_id: req.params.set_id,
-    })
-      .populate({
-        path: 'question',
-        select: ['-answer'],
-      })
-      .populate({
-        path: 'user',
-        select: ['-password'],
-      })
-
-    res.status(200).json({ msg: result })
-  },
-}
-
-const isCorrectAnswer = async (question_id, answer) => {
-  try {
-    const question = await findQuiz(question_id)
-
-    if (!question) return false
-
-    return question.answer == answer
-  } catch (error) {
-    throw error
-  }
-}
-
-const hasBeenAnswered = async (user_id, question_id) => {
-  try {
-    const answer = await AnsweredQuizesSchema.findOne({
-      user: user_id,
-      question: question_id,
-    })
-
-    return answer ? true : false
-  } catch (error) {
-    throw error
-  }
-}
-
-const findQuiz = async (question_id) => {
-  return await Quizes.findById(question_id)
 }

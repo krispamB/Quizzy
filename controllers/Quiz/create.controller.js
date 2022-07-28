@@ -109,30 +109,13 @@ module.exports = {
       }
     })
   },
-  getAllSet: (req, res) => {
-    const user = req.user._id
-
-    Set.find(user).then((set) => {
-      if (!set) {
-        res.status(404).json({
-          message: 'Not found',
-        })
-      } else {
-        res.status(200).json({
-          success: true,
-          message: `These are all the quizes you've created`,
-          data: set,
-        })
-      }
-    })
-  },
   takeQuiz: async (req, res) => {
     try {
       const { quizCode, email } = req.params
       const set = await Set.findOne({ quizCode })
       const questionsWithoutAnswers = set.questions.map((question) => {
-        const {answer, ...others} = question;
-        return others;
+        const { answer, ...others } = question
+        return others
       })
       if (!set) {
         res.status(404).json({
@@ -143,7 +126,10 @@ module.exports = {
         res.status(200).json({
           success: true,
           message: `You can now take your test, you have ${set.duration}`,
-          data: questionsWithoutAnswers
+          data: {
+            time: set.duration,
+            questions: questionsWithoutAnswers,
+          },
         })
       }
     } catch (error) {
@@ -180,13 +166,15 @@ module.exports = {
             success: true,
             message: `You can now take your test, you have ${set.duration}`,
             data: {
+              title: set.title,
+              instruction: set.instruction,
+              duration: set.duration,
               quizCode,
-              email
+              email,
             },
           })
         }
       }
-
     } catch (error) {
       console.log(error)
     }

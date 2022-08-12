@@ -1,4 +1,5 @@
 const Quizes = require('../../models/Quizes')
+const Answered = require('../../models/AnsweredQuizzes')
 const Set = require('../../models/QuestionSet')
 const random = require('randomstring')
 const { quizCodeEmail } = require('../mails')
@@ -146,6 +147,13 @@ module.exports = {
     try {
       const { quizCode, email } = req.body
       const set = await Set.findOne({ quizCode })
+      const answered = await Answered.find({ quizCode })
+      // Separete testers into an array
+      const testerEmails = answered.map((info) => {
+        const { email } = info
+        return email
+      })
+      console.log(testerEmails)
       if (!set) {
         res.status(404).json({
           message: `Check your email to confirm that ${quizCode} is the code that was sent to you`,
@@ -160,6 +168,11 @@ module.exports = {
           res.status(401).json({
             success: false,
             message: 'Please check your email',
+          })
+        } else if (testerEmails.find(checkEmail) !== undefined) {
+          res.status(401).json({
+            success: false,
+            message: 'You have already taken the test',
           })
         } else {
           res.status(200).json({

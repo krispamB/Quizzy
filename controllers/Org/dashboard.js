@@ -17,7 +17,7 @@ module.exports = {
       } else {
         res.status(200).json({
           success: true,
-          message: 'All the questions you set',
+          message: 'These are the tests you created',
           data: hide,
         })
       }
@@ -28,8 +28,14 @@ module.exports = {
   getResult: async (req, res) => {
     try {
       const { quizCode } = req.params
-      const results = await Answered.find({ quizCode })
-      if (!results) {
+      const data = await Answered.find({ quizCode })
+
+      const results = data.map(filter => {
+        const {email, mark} = filter
+        return {email, mark}
+      })
+
+      if (results === undefined) {
         res.status(404).json({
           message: 'No tests have been submitted'
         })

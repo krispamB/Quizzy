@@ -10,9 +10,9 @@ module.exports = {
         const { title, quizCode, ...others } = cut
         return { title, quizCode }
       })
-      if (!set) {
+      if (hide.length === 0) {
         res.status(404).json({
-          message: 'Not found',
+          message: 'No quiz has been Published',
         })
       } else {
         res.status(200).json({
@@ -35,7 +35,7 @@ module.exports = {
         return {email, mark}
       })
 
-      if (results === undefined) {
+      if (results.length === 0) {
         res.status(404).json({
           message: 'No tests have been submitted'
         })

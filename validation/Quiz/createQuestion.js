@@ -7,10 +7,6 @@ module.exports = function validateQuestion(data) {
   data.question = isEmpty(data.question) ? '' : data.question
   data.answer = isEmpty(data.answer) ? '' : data.answer
 
-  // Question
-  if(Validator.isEmpty(data.question)) {
-    errors.question = 'Question field is required'
-  }
   // Answer
   if(Validator.isEmpty(data.answer)) {
     errors.answer = 'Answer field is required'

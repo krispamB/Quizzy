@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const Quizes = require('../../models/Quizes')
 const Set = require('../../models/QuestionSet')
+const multerConfig = require('../../config/multer')
 const { auth, isOrg } = require('../../controllers/authcontroller')
 
 const {
@@ -10,13 +11,12 @@ const {
   getSet,
   takeQuiz,
   quizCode,
-  verify
+  verify,
 } = require('../../controllers/Quiz/create.controller')
 
 const { answer } = require('../../controllers/Quiz/answer.controller')
 
 const { getAllSet, getResult } = require('../../controllers/Org/dashboard')
-
 
 // @route GET api/quiz
 // @description Get all set from org
@@ -56,7 +56,12 @@ router.post('/', auth, questionSet)
 // @route PATCH api/quiz/:question_id/question
 // @description Create Question
 // @access Private
-router.patch('/question/:question_id', auth, createQuestion)
+router.patch(
+  '/question/:question_id',
+  multerConfig.single('question'),
+  auth,
+  createQuestion
+)
 
 // @route POST api/quiz/:quizCode/:email
 // @description Create Question

@@ -5,7 +5,10 @@ const QuestionsSchema = new Schema(
   {
     question: {
       type: String,
-      required: true,
+      required: false,
+    },
+    cloudinary_id: {
+      type: String
     },
     options: {
       type: [],

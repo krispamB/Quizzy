@@ -3,6 +3,7 @@ const Answered = require('../../models/AnsweredQuizzes')
 const Set = require('../../models/QuestionSet')
 const random = require('randomstring')
 const { quizCodeEmail } = require('../mails')
+const cloudinary = require('../../config/cloudinary')
 
 const validateQuizinput = require('../../validation/Quiz/createSet')
 const validateQuestion = require('../../validation/Quiz/createQuestion')
@@ -42,7 +43,7 @@ module.exports = {
       res.status(500).json(error)
     }
   },
-  createQuestion: (req, res) => {
+  createQuestion: async (req, res) => {
     const { errors, isValid } = validateQuestion(req.body)
 
     // Check Validation
@@ -50,38 +51,62 @@ module.exports = {
       return res.status(400).json(errors)
     }
 
-    const question_id = req.params.question_id
-    const { question, options, answer } = req.body
+    try {
+      const question_id = req.params.question_id
+      const { question, options, answer } = req.body
 
-    Set.findById(question_id).then((set) => {
-      console.log(set)
+      const set = await Set.findById(question_id)
       if (!set) {
-        return res.status(404).json({ message: 'Not found' })
-      } else {
-        const questions = new Quizes({
+        return res.status(404).json({
+          success: false,
+          message: 'Set not found',
+        })
+      }
+
+      if (question) {
+        const questionObj = new Quizes({
           question,
           options,
           answer,
           question_id,
+          cloudinary_id: null,
         })
-        questions
-          .save()
-          .then(
-            res.json({
-              success: true,
-              message: 'New question created',
-              data: questions,
-            })
-          )
-          .catch((err) => {
-            console.log(err)
-          })
-        set.questions.push(questions)
-        set.save().then((set) => {
-          console.log(set)
+
+        await questionObj.save()
+        res.status(201).json({
+          success: true,
+          message: 'Question created succesfully',
+          data: questionObj,
         })
+
+        await set.questions.push(questionObj)
+        set.save()
+        console.log(set)
+      } else if (req.file.path) {
+        console.log(req.file.path)
+        const image_url = await cloudinary.uploader.upload(req.file.path)
+        const questionObj = new Quizes({
+          question: image_url.secure_url,
+          options,
+          answer,
+          question_id,
+          cloudinary_id: image_url.public_id,
+        })
+
+        await questionObj.save()
+        res.status(201).json({
+          success: true,
+          message: 'Question created succesfully',
+          data: questionObj,
+        })
+
+        await set.questions.push(questionObj)
+        set.save()
+        console.log(set)
       }
-    })
+    } catch (error) {
+      console.error(error)
+    }
   },
   getSet: (req, res) => {
     const question_id = req.params.question_id
